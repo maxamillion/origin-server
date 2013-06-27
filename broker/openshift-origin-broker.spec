@@ -99,17 +99,21 @@ mkdir -p %{buildroot}%{_sysconfdir}/openshift/plugins.d
 
 cp -r . %{buildroot}%{brokerdir}
 %if %{with_systemd}
-mv %{buildroot}%{brokerdir}/systemd/openshift-broker.service %{buildroot}%{_unitdir}
-mv %{buildroot}%{brokerdir}/systemd/openshift-broker.env %{buildroot}%{_sysconfdir}/sysconfig/openshift-broker
+install -m0750 systemd/openshift-broker.service %{buildroot}%{_unitdir}
+install -m0644 systemd/openshift-broker.env %{buildroot}%{_sysconfdir}/sysconfig/openshift-broker
 %else
-mv %{buildroot}%{brokerdir}/init.d/* %{buildroot}%{_initddir}
+install -m0750 init.d/* %{buildroot}%{_initddir}
 %endif
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 ln -s %{brokerdir}/public %{buildroot}%{brokerdir}/httpd/root/broker
 ln -sf /usr/lib64/httpd/modules %{buildroot}%{brokerdir}/httpd/modules
 ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
-mv %{buildroot}%{brokerdir}/httpd/000002_openshift_origin_broker_proxy.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
-mv %{buildroot}%{brokerdir}/httpd/000002_openshift_origin_broker_servername.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+
+install -m0640 httpd/000002_openshift_origin_broker_proxy.conf \
+   %{buildroot}%{_sysconfdir}/httpd/conf.d/
+
+install -m0640 httpd/000002_openshift_origin_broker_servername.conf \
+   %{buildroot}%{_sysconfdir}/httpd/conf.d/
 
 mkdir -p %{buildroot}%{_var}/log/openshift/broker/httpd
 touch %{buildroot}%{_var}/log/openshift/broker/user_action.log
@@ -117,21 +121,28 @@ touch %{buildroot}%{_var}/log/openshift/broker/production.log
 touch %{buildroot}%{_var}/log/openshift/broker/development.log
 touch %{buildroot}%{_var}/log/openshift/broker/usage.log
 
-cp conf/broker.conf %{buildroot}%{_sysconfdir}/openshift/broker.conf
-cp conf/broker.conf %{buildroot}%{_sysconfdir}/openshift/broker-dev.conf
-cp conf/quickstarts.json %{buildroot}%{_sysconfdir}/openshift/quickstarts.json
-cp conf/plugins.d/README %{buildroot}%{_sysconfdir}/openshift/plugins.d/README
+install -m0640 conf/broker.conf \
+   %{buildroot}%{_sysconfdir}/openshift/broker.conf
+install -m0640 conf/broker.conf \
+   %{buildroot}%{_sysconfdir}/openshift/broker-dev.conf
+install -m0640 conf/quickstarts.json \
+   %{buildroot}%{_sysconfdir}/openshift/quickstarts.json
+install -m0640 conf/plugins.d/README \
+   %{buildroot}%{_sysconfdir}/openshift/plugins.d/README
 
 %if 0%{?fedora} >= 18
-mv %{buildroot}%{brokerdir}/httpd/httpd.conf.apache-2.4 %{buildroot}%{brokerdir}/httpd/httpd.conf
+install -m0640 httpd/httpd.conf.apache-2.4 \
+   %{buildroot}%{brokerdir}/httpd/httpd.conf
 %else
-mv %{buildroot}%{brokerdir}/httpd/httpd.conf.apache-2.3 %{buildroot}%{brokerdir}/httpd/httpd.conf
+install -m0640 httpd/httpd.conf.apache-2.3 \
+    %{buildroot}%{brokerdir}/httpd/httpd.conf
 %endif
 rm %{buildroot}%{brokerdir}/httpd/httpd.conf.apache-*
 
 %if 0%{?scl:1}
 rm %{buildroot}%{brokerdir}/httpd/broker.conf
-mv %{buildroot}%{brokerdir}/httpd/broker-scl-ruby193.conf %{buildroot}%{brokerdir}/httpd/broker.conf
+install -m0640 httpd/broker-scl-ruby193.conf \
+    %{buildroot}%{brokerdir}/httpd/broker.conf
 %else
 rm %{buildroot}%{brokerdir}/httpd/broker-scl-ruby193.conf
 %endif
