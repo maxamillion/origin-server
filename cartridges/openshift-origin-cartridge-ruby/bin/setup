@@ -30,9 +30,9 @@ if [ $version == '1.9' ]; then
 
     dirname $(scl enable ruby193 "which ruby")    > $OPENSHIFT_RUBY_DIR/env/OPENSHIFT_RUBY_PATH_ELEMENT
 
-    ld_path=$(LD_LIBRARY_PATH="" scl enable ruby193 "printenv LD_LIBRARY_PATH")
+    ld_path=$(LD_LIBRARY_PATH="" scl enable ruby193 v8314 "printenv LD_LIBRARY_PATH")
     set_env_var 'OPENSHIFT_RUBY_LD_LIBRARY_PATH_ELEMENT' $ld_path $env_dir
-    scl enable ruby193 "printenv MANPATH"         > $OPENSHIFT_RUBY_DIR/env/MANPATH
+    scl enable ruby193 v8314 "printenv MANPATH"         > $OPENSHIFT_RUBY_DIR/env/MANPATH
 
 fi
 
